@@ -48,6 +48,8 @@ class BreakoutBehavior: UIDynamicBehavior {
         get { return collider.items.filter{ $0 is UIView }.map{ $0 as! UIView } }
     }
     
+    var speed:CGFloat = 1.0
+    
     func addBall(ball: UIView) {
         dynamicAnimator?.referenceView?.addSubview(ball)
         collider.addItem(ball)
@@ -62,7 +64,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     func pushBall(ball: UIView) {
         let push = UIPushBehavior(items: [ball], mode: .Instantaneous)
-        push.magnitude = 1.0
+        push.magnitude = speed
         
         push.angle = CGFloat(Double(arc4random()) * M_PI * 2 / Double(UINT32_MAX))
         push.action = { [weak push] in

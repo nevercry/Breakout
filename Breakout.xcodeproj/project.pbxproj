@@ -15,6 +15,8 @@
 		4ABF41C21BCCB28800E836DC /* BreakoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABF41C11BCCB28800E836DC /* BreakoutTests.swift */; };
 		4ABF41CD1BCCB28800E836DC /* BreakoutUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABF41CC1BCCB28800E836DC /* BreakoutUITests.swift */; };
 		4ABF41DB1BCCD30C00E836DC /* BreakoutBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABF41DA1BCCD30C00E836DC /* BreakoutBehavior.swift */; settings = {ASSET_TAGS = (); }; };
+		4ABF41DD1BCF8A6C00E836DC /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABF41DC1BCF8A6C00E836DC /* Settings.swift */; settings = {ASSET_TAGS = (); }; };
+		4ABF41DF1BCFA3C000E836DC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ABF41DE1BCFA3C000E836DC /* SettingsViewController.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		4ABF41CC1BCCB28800E836DC /* BreakoutUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakoutUITests.swift; sourceTree = "<group>"; };
 		4ABF41CE1BCCB28800E836DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4ABF41DA1BCCD30C00E836DC /* BreakoutBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutBehavior.swift; sourceTree = "<group>"; };
+		4ABF41DC1BCF8A6C00E836DC /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		4ABF41DE1BCFA3C000E836DC /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,8 +105,10 @@
 			children = (
 				4ABF41AC1BCCB28800E836DC /* AppDelegate.swift */,
 				4ABF41AE1BCCB28800E836DC /* ViewController.swift */,
-				4ABF41B01BCCB28800E836DC /* Main.storyboard */,
 				4ABF41DA1BCCD30C00E836DC /* BreakoutBehavior.swift */,
+				4ABF41DC1BCF8A6C00E836DC /* Settings.swift */,
+				4ABF41DE1BCFA3C000E836DC /* SettingsViewController.swift */,
+				4ABF41B01BCCB28800E836DC /* Main.storyboard */,
 				4ABF41B31BCCB28800E836DC /* Assets.xcassets */,
 				4ABF41B51BCCB28800E836DC /* LaunchScreen.storyboard */,
 				4ABF41B81BCCB28800E836DC /* Info.plist */,
@@ -263,6 +269,8 @@
 			files = (
 				4ABF41DB1BCCD30C00E836DC /* BreakoutBehavior.swift in Sources */,
 				4ABF41AF1BCCB28800E836DC /* ViewController.swift in Sources */,
+				4ABF41DD1BCF8A6C00E836DC /* Settings.swift in Sources */,
+				4ABF41DF1BCFA3C000E836DC /* SettingsViewController.swift in Sources */,
 				4ABF41AD1BCCB28800E836DC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

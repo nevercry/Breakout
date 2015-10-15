@@ -33,7 +33,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
 
     @IBOutlet weak var gameView: UIView!
     
-    let breakout = BreakoutBehavior()
+    var breakout = BreakoutBehavior()
+    
     lazy var animator: UIDynamicAnimator = { UIDynamicAnimator(referenceView: self.gameView) }()
     
     lazy var paddle: UIView = {
@@ -60,19 +61,19 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
     private typealias BrickAction = ((Int) -> Void)?
     
-    
+    private var autoStartTimer: NSTimer?
     
     // MARK: - Lifecycle
     
     private func levelOne() {
         if bricks.count > 0 { return }
         
-        let deltaX = Constans.BrickTotalWidth / CGFloat(Constans.BrickColumns)
-        let deltaY = Constans.BrickTotalHeight / CGFloat(Constans.BrickRows)
+        let deltaX = Constans.BrickTotalWidth / CGFloat(Settings().columns!)
+        let deltaY = Constans.BrickTotalHeight / CGFloat(Settings().rows!)
         var frame = CGRect(origin: CGPointZero, size: CGSize(width: deltaX, height: deltaY))
         
-        for row in 0..<Constans.BrickRows {
-            for column in 0..<Constans.BrickColumns {
+        for row in 0..<Settings().rows! {
+            for column in 0..<Settings().columns! {
                 frame.origin.x = deltaX * CGFloat(column)
                 frame.origin.y = deltaY * CGFloat(row) + Constans.BrickTopSpacing
                 let brick = UIView(frame: frame)
@@ -86,24 +87,27 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
                 
                 var action: BrickAction = nil
                 
-                if row + 1 == Constans.BrickRows {
-                    brick.backgroundColor = UIColor.blackColor()
-                    action = { index in
-                        if brick.backgroundColor != UIColor.blackColor() {
-                            self.destroyBrickAtIndex(index)
-                        } else {
-                            NSTimer.scheduledTimerWithTimeInterval(0.05, target: self, selector: "changeBrickColor:", userInfo: brick, repeats: false)
+                if Settings().difficulty == 1 {
+                    if row + 1 == Settings().rows! {
+                        brick.backgroundColor = UIColor.blackColor()
+                        action = { index in
+                            if brick.backgroundColor != UIColor.blackColor() {
+                                self.destroyBrickAtIndex(index)
+                            } else {
+                                NSTimer.scheduledTimerWithTimeInterval(0.05, target: self, selector: "changeBrickColor:", userInfo: brick, repeats: false)
+                            }
                         }
                     }
                 }
                 
-                bricks[row * Constans.BrickColumns + column] = Brick(relativeFrame: frame, view: brick, action: action)
+                
+                bricks[row * Settings().columns! + column] = Brick(relativeFrame: frame, view: brick, action: action)
             }
             
         }
     }
     
-    private func changeBrickColor(timer: NSTimer) {
+    func changeBrickColor(timer: NSTimer) {
         if let brick = timer.userInfo as? UIView {
             UIView.animateWithDuration(0.5, animations: {
                 brick.backgroundColor = UIColor.cyanColor()
@@ -112,6 +116,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     private func levelFinished() {
+        autoStartTimer?.invalidate()
+        autoStartTimer = nil
         for ball in breakout.balls {
             breakout.removeBall(ball)
         }
@@ -126,6 +132,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         animator.addBehavior(breakout)
+        
+        _ = Settings(defaultColumns: Constans.BrickColumns, defaultRows: Constans.BrickRows, defaultBalls: 1, defaultDifficulty: 0)
         
         gameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushBall:"))
         gameView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: "panPaddle:"))
@@ -158,6 +166,52 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if Settings().changed {
+            Settings().changed = false
+            for (_, brick) in bricks {
+                brick.view.removeFromSuperview()
+            }
+            bricks.removeAll(keepCapacity: true)
+            
+            for ball in breakout.balls {
+                ball.removeFromSuperview()
+            }
+            
+            animator.removeAllBehaviors()
+            breakout = BreakoutBehavior()
+            animator.addBehavior(breakout)
+            breakout.collisionDelegate = self
+            breakout.speed = CGFloat(Settings().speed)
+            
+            levelOne()
+        }
+        
+        setAutoStartTimer()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        autoStartTimer?.invalidate()
+        autoStartTimer = nil
+    }
+    
+    private func setAutoStartTimer() {
+        if Settings().autoStart {
+            autoStartTimer = NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector: "autoStart:", userInfo: nil, repeats: true)
+        }
+    }
+    
+    func autoStart(timer: NSTimer) {
+        if breakout.balls.count < Settings().balls {
+            let ball = createBall()
+            placeBall(ball)
+            breakout.addBall(ball)
+            breakout.pushBall(breakout.balls.last!)
+        }
+    }
+    
     // MARK: - ball
     
     func placeBall(ball: UIView) {
@@ -166,7 +220,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
     func pushBall(gesture: UITapGestureRecognizer) {
         if gesture.state == .Ended {
-            if breakout.balls.count == 0 {
+            if breakout.balls.count < Settings().balls {
                 let ball = createBall()
                 placeBall(ball)
                 breakout.addBall(ball)
