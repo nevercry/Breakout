@@ -9,6 +9,13 @@
 import UIKit
 
 class BreakoutBehavior: UIDynamicBehavior {
+    private let gravity = UIGravityBehavior()
+    
+    var collisionDelegate: UICollisionBehaviorDelegate? {
+        get { return collider.collisionDelegate }
+        set { collider.collisionDelegate = newValue }
+    }
+    
     lazy var collider: UICollisionBehavior = {
         let lazilyCreatedCollider = UICollisionBehavior()
         lazilyCreatedCollider.action = {
@@ -34,6 +41,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         super.init()
         addChildBehavior(collider)
         addChildBehavior(ballBehavior)
+        addChildBehavior(gravity)
     }
     
     var balls:[UIView] {
@@ -65,9 +73,21 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(push)
     }
     
-    func addBarrier(path: UIBezierPath, named name: String) {
-        collider.removeBoundaryWithIdentifier(name)
+    func addBarrier(path: UIBezierPath, named name: NSCopying) {
+        removeBarrier(name)
         collider.addBoundaryWithIdentifier(name, forPath: path)
+    }
+    
+    func removeBarrier(name: NSCopying) {
+        collider.removeBoundaryWithIdentifier(name)
+    }
+    
+    func addBrick(brick: UIView) {
+        gravity.addItem(brick)
+    }
+    
+    func removeBrick(brick: UIView) {
+        gravity.removeItem(brick)
     }
 
 }
