@@ -103,12 +103,24 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
     }
     
-    func changeBrickColor(timer: NSTimer) {
+    private func changeBrickColor(timer: NSTimer) {
         if let brick = timer.userInfo as? UIView {
             UIView.animateWithDuration(0.5, animations: {
                 brick.backgroundColor = UIColor.cyanColor()
             })
         }
+    }
+    
+    private func levelFinished() {
+        for ball in breakout.balls {
+            breakout.removeBall(ball)
+        }
+        
+        let alertController = UIAlertController(title: "Game Over", message: "", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Play Again", style: .Default, handler: { (aciton) in
+            self.levelOne()
+        }))
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -261,6 +273,9 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
                             (success) -> Void in
                             self.breakout.removeBrick(brick.view)
                             brick.view.removeFromSuperview()
+                            if self.bricks.count == 0 {
+                                self.levelFinished()
+                            }
                     })
             })
             bricks.removeValueForKey(index)
